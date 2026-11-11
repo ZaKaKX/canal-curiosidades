@@ -37,6 +37,7 @@ bash setup.sh            # skia, kokoro (voz), bpy/Blender 5 em .venv-bl, modelo
 9. **Revisão obrigatória antes de entregar**: contact sheet 1 fps; `ffprobe` (1080x1920, 30/1, duração 60+ s); conferir cada fato da tela contra sources.md; legenda nunca em cima de rosto.
 10. **Entrega ao Pedro** (SendUserFile + mensagem em português, curta):
     - o .mp4;
+    - **melhor horário para postar (horário de Brasília)**, pensando no público dos EUA: dizer o horário exato, o horário correspondente em Nova York e o porquê em 1 linha (ver "Horários de postagem"; fim de semana o pico da manhã nos EUA é mais tarde);
     - legenda do post em inglês (1 linha com pergunta para gerar comentário) + 3–5 hashtags (#history #historyfacts #didyouknow + 1–2 do tema);
     - sugestão de capa (frame + texto curto em inglês);
     - o roteiro com tradução PT;
@@ -46,7 +47,9 @@ bash setup.sh            # skia, kokoro (voz), bpy/Blender 5 em .venv-bl, modelo
 
 ## Horários de postagem (público EUA, horário de Brasília)
 - **9h** e **22h** (7h e 20h em Nova York, de novembro a março). Quando os EUA entrarem no horário de verão (março), passa para **8h e 21h**.
+- Fim de semana: manhã às **11h** (9h NY), noite mantém **22h**.
 - Entregar o vídeo antes do horário de postagem.
+- Conta: nome **Wait, Really?** (@waitreally.history), bio em inglês, foto de perfil = personagem do canal (ver episodes/ep01/profile.png).
 
 ## Regras
 - Só fatos verificáveis; na dúvida, tirar do roteiro.

@@ -1,0 +1,7 @@
+.venv-bl/
+models/
+__pycache__/
+*.mp4
+*.wav
+work/
+plates/

@@ -39,7 +39,7 @@ bash setup.sh            # skia, kokoro (voz), bpy/Blender 5 em .venv-bl, modelo
     - o .mp4;
     - **melhor horário para postar (horário de Brasília)**, pensando no público dos EUA: dizer o horário exato, o horário correspondente em Nova York e o porquê em 1 linha (ver "Horários de postagem"; fim de semana o pico da manhã nos EUA é mais tarde);
     - legenda do post em inglês (1 linha com pergunta para gerar comentário) + 3–5 hashtags (#history #historyfacts #didyouknow + 1–2 do tema);
-    - sugestão de capa (frame + texto curto em inglês);
+    - **a capa pronta (PNG 1080x1920), SEMPRE**: gerar com `python3 -I kit/cover.py episodes/epNN/render.py <work>/timings.json <work>/plates <segundo> "LINHA 1|LINHA 2" episodes/epNN/cover.png "PALAVRAS,AMARELAS"` — frame forte do episódio (personagem + objeto principal, sem legenda) + título curto em inglês de 3–6 palavras que gere curiosidade; conferir a imagem antes de enviar e mandar junto com o vídeo (ver episodes/ep01/cover.png);
     - o roteiro com tradução PT;
     - lembrete: ativar o rótulo "conteúdo gerado por IA" (voz sintética) ao postar;
     - se restarem ≤4 temas em themes.md, avisar para mandar mais.

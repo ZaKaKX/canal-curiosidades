@@ -5,12 +5,12 @@ Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 
 ## FEITOS
 - EP01 — A mulher que sobreviveu a 3 naufrágios (Violet Jessop) — 2026-11-11
+- EP02 — O navio que afundou a 1 km do porto (Vasa, 1628) — 2026-11-11
 
 ## RESTANTES
 - O computador de 2.000 anos: Mecanismo de Anticítera, achado num naufrágio grego, previa eclipses
 - O fogo que água não apagava: fogo grego de Bizâncio, receita perdida até hoje
 - O concreto romano que se conserta sozinho (MIT descobriu o porquê em 2023)
-- O navio que afundou a 1 km do porto: Vasa, Suécia, 1628, canhões demais por ordem do rei
 - A torre que era pra ser demolida: Torre Eiffel, prazo de 20 anos, salva por uma antena de rádio
 - O homem que sobreviveu às duas bombas atômicas: Tsutomu Yamaguchi (Hiroshima e Nagasaki)
 - O jóquei que venceu a corrida morto: Frank Hayes, 1923

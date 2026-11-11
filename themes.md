@@ -4,10 +4,11 @@ Regra: sortear um tema da lista RESTANTES (nunca em ordem). Ao terminar um epis�
 Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 
 ## FEITOS
-- EP01 — A mulher que sobreviveu a 3 naufrágios (Violet Jessop) — 2026-11-11
-- EP02 — O navio que afundou a 1 km do porto (Vasa, 1628) — 2026-11-11
+- EP01 — A mulher que sobreviveu a 3 naufrágios (Violet Jessop) — 2026-11-11 (versão PT-BR: script_pt.md / render_pt.py)
+- EP02 — Vasa (1628) — 2026-11-11 — feito em INGLÊS, descartado (canal mudou para PT-BR)
 
 ## RESTANTES
+- PRIORIDADE: refazer em português o navio que afundou a 1 km do porto (Vasa, 1628) — reaproveitar episodes/ep02/plates.py e as fontes; salvar como próximo episódio
 - O computador de 2.000 anos: Mecanismo de Anticítera, achado num naufrágio grego, previa eclipses
 - O fogo que água não apagava: fogo grego de Bizâncio, receita perdida até hoje
 - O concreto romano que se conserta sozinho (MIT descobriu o porquê em 2023)

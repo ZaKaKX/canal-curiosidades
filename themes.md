@@ -7,6 +7,7 @@ Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 - EP01 — A mulher que sobreviveu a 3 naufrágios (Violet Jessop) — 2026-11-11 (versão PT-BR: script_pt.md / render_pt.py)
 - EP02 — Vasa (1628) — 2026-11-11 — feito em INGLÊS, descartado (canal mudou para PT-BR)
 - EP03 — O navio que afundou no porto (Vasa, 1628) — 2026-11-12 — versão PT-BR
+- EP04 — As estátuas gregas nunca foram brancas — 2026-11-12
 
 ## RESTANTES
 - O computador de 2.000 anos: Mecanismo de Anticítera, achado num naufrágio grego, previa eclipses
@@ -20,5 +21,4 @@ Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 - A onda de melaço que matou 21 pessoas: Boston, 1919
 - A epidemia de dança: Estrasburgo, 1518
 - Por que a Torre de Pisa nunca caiu?
-- Por que as estátuas gregas eram coloridas?
 - Por que Veneza não afunda? (cidade sobre troncos de madeira)

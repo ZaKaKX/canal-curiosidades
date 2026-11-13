@@ -9,9 +9,9 @@ Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 - EP03 — O navio que afundou no porto (Vasa, 1628) — 2026-11-12 — versão PT-BR
 - EP04 — As estátuas gregas nunca foram brancas — 2026-11-12
 - EP05 — A epidemia de dança (Estrasburgo, 1518) — 2026-11-13
+- EP06 — O computador de 2.000 anos (Mecanismo de Anticítera) — 2026-11-13
 
 ## RESTANTES
-- O computador de 2.000 anos: Mecanismo de Anticítera, achado num naufrágio grego, previa eclipses
 - O fogo que água não apagava: fogo grego de Bizâncio, receita perdida até hoje
 - O concreto romano que se conserta sozinho (MIT descobriu o porquê em 2023)
 - A torre que era pra ser demolida: Torre Eiffel, prazo de 20 anos, salva por uma antena de rádio

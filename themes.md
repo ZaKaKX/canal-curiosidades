@@ -10,11 +10,11 @@ Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 - EP04 — As estátuas gregas nunca foram brancas — 2026-11-12
 - EP05 — A epidemia de dança (Estrasburgo, 1518) — 2026-11-13
 - EP06 — O computador de 2.000 anos (Mecanismo de Anticítera) — 2026-11-13
+- EP07 — A torre que era pra ser desmontada (Torre Eiffel) — 2026-11-14
 
 ## RESTANTES
 - O fogo que água não apagava: fogo grego de Bizâncio, receita perdida até hoje
 - O concreto romano que se conserta sozinho (MIT descobriu o porquê em 2023)
-- A torre que era pra ser demolida: Torre Eiffel, prazo de 20 anos, salva por uma antena de rádio
 - O homem que sobreviveu às duas bombas atômicas: Tsutomu Yamaguchi (Hiroshima e Nagasaki)
 - O jóquei que venceu a corrida morto: Frank Hayes, 1923
 - O rei mais rico da história: Mansa Musa derrubou o preço do ouro no Cairo

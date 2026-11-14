@@ -11,6 +11,7 @@ Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 - EP05 — A epidemia de dança (Estrasburgo, 1518) — 2026-11-13
 - EP06 — O computador de 2.000 anos (Mecanismo de Anticítera) — 2026-11-13
 - EP07 — A torre que era pra ser desmontada (Torre Eiffel) — 2026-11-14
+- EP08 — A onda de melaço que matou 21 pessoas (Boston, 1919) — 2026-11-14
 
 ## RESTANTES
 - O fogo que água não apagava: fogo grego de Bizâncio, receita perdida até hoje
@@ -19,6 +20,5 @@ Quando restarem 4 ou menos, avisar o Pedro na entrega para mandar novos temas.
 - O jóquei que venceu a corrida morto: Frank Hayes, 1923
 - O rei mais rico da história: Mansa Musa derrubou o preço do ouro no Cairo
 - A guerra que a Austrália perdeu pra emas: Guerra dos Emus, 1932
-- A onda de melaço que matou 21 pessoas: Boston, 1919
 - Por que a Torre de Pisa nunca caiu?
 - Por que Veneza não afunda? (cidade sobre troncos de madeira)

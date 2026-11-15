@@ -61,3 +61,6 @@ bash setup.sh            # skia, kokoro (voz), bpy/Blender 5 em .venv-bl, modelo
 - **Fluxo:** Pedro manda um vídeo de REFERÊNCIA → Claude assiste (embed `https://www.tiktok.com/embed/v2/<id>` no navegador) e escreve uma história **original** do Teca na mesma pegada (tema, tom, gancho, ritmo) — nunca copiar roteiro/personagens do outro canal → Pedro aprova e **grava a narração** (voz dele, sem TTS) → Claude anima: cenários com luz cinematográfica, desfoque, bokeh e poeira; Teca com boca sincronizada ao áudio do Pedro; legendas; som; capa.
 - **Parte 2:** se a história passar de ~90 s ou tiver um bom suspense no meio, dividir em Parte 1 (termina no gancho, "parte 2 no perfil") e Parte 2.
 - Estrutura padrão: gancho com o Teca se achando → plano/tentativa → todo mundo duvida → dá errado (engraçado) → virada → ele surpreende.
+- O Teca é **brasileiro** e não deixa de ser em nenhuma história, mesmo quando ela se passa fora do Brasil: jeitinho brasileiro, portunhol, referência a futebol/comida/costumes do Brasil, improviso pra sair de enrascada.
+- Narração em 1ª pessoa ("eu"), gravada pelo Pedro como se fosse o Teca contando.
+- Histórias com crime/perigo: tom de comédia e aventura, sem detalhes reais de crimes e sem estereotipar o povo do lugar (locais também ajudam/são legais).

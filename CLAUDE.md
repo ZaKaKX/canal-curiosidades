@@ -54,3 +54,10 @@ bash setup.sh            # skia, kokoro (voz), bpy/Blender 5 em .venv-bl, modelo
 - Só fatos verificáveis; na dúvida, tirar do roteiro.
 - Nunca postar nada na conta do Pedro; ele mesmo posta.
 - Nunca usar voz clonada de pessoa real; voz fixa do canal = `pm_alex`.
+
+---
+# NOVO FORMATO (a partir de 15/11/2026): histórias do TECA — substitui o formato de curiosidades acima onde houver conflito
+- **Teca** (`kit/teca.py`, folha em `episodes/teca_sheet.png`): personagem fixo e protagonista de histórias **fictícias**. Intelectual desenrolado (não CDF): esperto, confiante, mãos no bolso, sorriso de canto, óculos redondos de acetato marrom, jaqueta varsity marinho/creme com "T", camiseta branca, calça escura, tênis branco. Sonha em ser o mais atlético da escola: tenta, faz coisas bacanas, nunca consegue do jeito que planejou, é sempre o desacreditado — e sempre surpreende no final.
+- **Fluxo:** Pedro manda um vídeo de REFERÊNCIA → Claude assiste (embed `https://www.tiktok.com/embed/v2/<id>` no navegador) e escreve uma história **original** do Teca na mesma pegada (tema, tom, gancho, ritmo) — nunca copiar roteiro/personagens do outro canal → Pedro aprova e **grava a narração** (voz dele, sem TTS) → Claude anima: cenários com luz cinematográfica, desfoque, bokeh e poeira; Teca com boca sincronizada ao áudio do Pedro; legendas; som; capa.
+- **Parte 2:** se a história passar de ~90 s ou tiver um bom suspense no meio, dividir em Parte 1 (termina no gancho, "parte 2 no perfil") e Parte 2.
+- Estrutura padrão: gancho com o Teca se achando → plano/tentativa → todo mundo duvida → dá errado (engraçado) → virada → ele surpreende.

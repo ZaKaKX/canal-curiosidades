@@ -9,6 +9,7 @@ from gfx import skia, C, fill, stroke, lin, TF
 from joca import _tt, _head_path, _curl_hair, SKIN, SKIN_SH, SKIN_HI, HAIR, HAIR_SH, HAIR_HI, LINE
 
 JERSEY, JERSEY_SH, JERSEY_HI = "#efe6d2", "#cdbf9f", "#fffaf0"
+PANTS, PANTS_SH = "#2f3238", "#1f2125"
 NAVY, NAVY_SH = "#26324f", "#18203a"
 TEE, TEE_SH = "#f7f7f4", "#d4d3cd"
 SHORTS, SHORTS_SH = "#8b8f97", "#676b73"
@@ -16,7 +17,7 @@ SOCK, STRIPE = "#f4f2ec", "#26324f"
 FRAME, FRAME_HI = "#5a3a2c", "#8a6250"
 
 
-def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0, seed=0.0,
+def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="pockets", mouth_open=0.0, seed=0.0,
          rim="#ffd29a", rim_a=0, shadow=True, walk=0.0, blink=True, flip=False, lean=None, number="00"):
     """(x,y)=pés. Altura ~1000*s. Cabeça centro ≈ y-770*s, raio ≈ 205*s."""
     cv.save(); cv.translate(x, y); cv.scale(-s if flip else s, s)
@@ -27,30 +28,23 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
         cv.drawOval(skia.Rect(-175, -17, 175, 17), fill(C("#000000", 75)))
     cv.translate(0, -bob)
     sw = 30 * math.sin(walk) if walk else 0
-    # ---- skinny legs, tube socks, big retro sneakers
     for sx, ph in ((-1, 1), (1, -1)):
-        lx = sx * 44 + ph * sw
-        leg = skia.Path(); leg.addRoundRect(skia.Rect(lx - 15, -260, lx + 15, -150), 14, 14)
-        _tt(cv, leg, SKIN, SKIN_SH, lw=4, off=(6, 6))
-        sock = skia.Path(); sock.moveTo(lx - 21, -190); sock.lineTo(lx + 21, -190); sock.lineTo(lx + 20, -40); sock.lineTo(lx - 20, -40); sock.close()
-        _tt(cv, sock, SOCK, "#d6d2c8", lw=4, off=(6, 6))
-        for k in (0, 1):
-            cv.drawRect(skia.Rect(lx - 20, -182 + k * 18, lx + 20, -172 + k * 18), fill(C(STRIPE)))
-        shoe = skia.Path(); shoe.moveTo(lx - 54, -4)
-        shoe.cubicTo(lx - 62, -62, lx - 18, -74, lx + 6, -64)
-        shoe.cubicTo(lx + 44, -56, lx + 84, -40, lx + 80, -4); shoe.close()
-        _tt(cv, shoe, "#f7f5f0", "#cdc7bc", lw=4.5, off=(10, 8))
-        cv.drawRoundRect(skia.Rect(lx - 56, -18, lx + 82, -2), 8, 8, fill(C("#d9d1c2")))
-        sw2 = skia.Path(); sw2.moveTo(lx - 30, -40); sw2.quadTo(lx + 10, -26, lx + 46, -44); cv.drawPath(sw2, stroke(C(NAVY), 7))
-    # ---- shorts (too high, wide legs)
-    sh = skia.Path(); sh.moveTo(-118, -400); sh.lineTo(118, -400); sh.lineTo(136, -238); sh.lineTo(14, -230)
-    sh.lineTo(0, -275); sh.lineTo(-14, -230); sh.lineTo(-136, -238); sh.close()
-    _tt(cv, sh, SHORTS, SHORTS_SH, lw=4.5, off=(16, 12))
-    for sx in (-1, 1):
-        cv.drawLine(sx * 128, -290, sx * 132, -242, stroke(C(TEE), 6))
+        lx = sx * 46 + ph * sw
+        leg = skia.Path(); leg.moveTo(lx - 38, -330); leg.cubicTo(lx - 40, -230, lx - 36, -120, lx - 34, -52)
+        leg.lineTo(lx + 34, -52); leg.cubicTo(lx + 36, -120, lx + 40, -230, lx + 38, -330); leg.close()
+        _tt(cv, leg, PANTS, PANTS_SH, lw=4, off=(10, 8))
+        cv.drawLine(lx - 10, -300, lx - 6, -70, stroke(C(PANTS_SH), 4))
+        ank = skia.Path(); ank.addRoundRect(skia.Rect(lx - 20, -62, lx + 20, -40), 8, 8); _tt(cv, ank, SKIN, SKIN_SH, lw=3, off=(4, 4))
+        shoe = skia.Path(); shoe.moveTo(lx - 46, -4)
+        shoe.cubicTo(lx - 52, -48, lx - 14, -58, lx + 6, -50)
+        shoe.cubicTo(lx + 36, -44, lx + 68, -32, lx + 64, -4); shoe.close()
+        _tt(cv, shoe, "#f7f5f0", "#cdc7bc", lw=4, off=(9, 7))
+        cv.drawRoundRect(skia.Rect(lx - 48, -14, lx + 66, -2), 6, 6, fill(C("#e2dbcf")))
+        sw2 = skia.Path(); sw2.moveTo(lx - 22, -34); sw2.quadTo(lx + 10, -22, lx + 40, -38); cv.drawPath(sw2, stroke(C(NAVY), 6))
     cv.rotate(sway)
     POSES = {
         "stand": [((-118, -570), (-152, -450), (-146, -330)), ((118, -570), (152, -450), (146, -330))],
+        "pockets": [((-118, -570), (-160, -470), (-112, -360)), ((118, -570), (160, -470), (112, -360))],
         "hips": [((-118, -570), (-210, -465), (-118, -360)), ((118, -570), (210, -465), (118, -360))],
         "point": [((-118, -570), (-152, -450), (-146, -330)), ((118, -570), (240, -610), (345, -650))],
         "think": [((-118, -570), (-152, -450), (-146, -330)), ((118, -570), (170, -430), (70, -650))],
@@ -67,13 +61,15 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
     def arm(a, sweat=False):
         (x0, y0), (x1, y1), (x2, y2) = a
         pth = skia.Path(); pth.moveTo(x0, y0); pth.quadTo(x1, y1, x2, y2)
-        cv.drawPath(pth, stroke(C(LINE), 40)); cv.drawPath(pth, stroke(C(TEE_SH), 33)); cv.drawPath(pth, stroke(C(TEE), 24))
+        cv.drawPath(pth, stroke(C(LINE), 64)); cv.drawPath(pth, stroke(C(JERSEY_SH), 56)); cv.drawPath(pth, stroke(C(JERSEY), 42))
         if pose == "flex":  # tiny bicep bump — the joke is it's barely there
             mx_, my_ = 0.25 * x0 + 0.5 * x1 + 0.25 * x2, 0.25 * y0 + 0.5 * y1 + 0.25 * y2 - 14
             cv.drawCircle(mx_, my_, 15, fill(C(TEE))); cv.drawArc(skia.Rect(mx_ - 15, my_ - 15, mx_ + 15, my_ + 15), 180, 180, False, stroke(C(LINE), 3))
-        if sweat:
-            band = skia.Path(); band.addRoundRect(skia.Rect(x2 - 22, y2 - 30, x2 + 22, y2 - 4), 8, 8)
-            _tt(cv, band, NAVY, NAVY_SH, lw=3.5, off=(4, 4))
+        cuff = skia.Path(); cuff.addRoundRect(skia.Rect(x2 - 32, y2 - 34, x2 + 32, y2 - 2), 12, 12)
+        _tt(cv, cuff, NAVY, NAVY_SH, lw=4, off=(5, 5))
+        cv.drawLine(x2 - 30, y2 - 18, x2 + 30, y2 - 18, stroke(C(JERSEY), 4))
+        if pose == "pockets":
+            return
         hand = skia.Path(); hand.moveTo(x2 - 22, y2 - 4)
         hand.cubicTo(x2 - 30, y2 + 48, x2 + 26, y2 + 52, x2 + 24, y2 + 2)
         hand.cubicTo(x2 + 38, y2 - 8, x2 + 40, y2 + 18, x2 + 26, y2 + 26); hand.close()
@@ -84,31 +80,31 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
             cv.drawRoundRect(skia.Rect(x2 - 30, y2 - 61, x2 + 4, y2 + 16), 6, 6, lin(0, y2 - 60, 0, y2 + 16, [C("#9fe0ff", 230), C("#4a90d9", 230)]))
 
     front = pose in ("phone", "think", "hips", "facepalm")
-    up = [a for a in arms if a[2][1] < -570 or (front and a[0][0] > 0)]
+    up = [a for a in arms if a[2][1] < -570 or (front and a[0][0] > 0) or pose == "pockets"]
     down = [a for a in arms if a not in up]
     for a in down:
         arm(a, sweat=a[0][0] > 0)
     # ---- oversized jersey over long-sleeve tee
     cv.save(); cv.translate(0, -300); cv.scale(1, br); cv.translate(0, 300)
-    tee = skia.Path(); tee.addRoundRect(skia.Rect(-120, -612, 120, -560), 26, 26)
-    _tt(cv, tee, TEE, TEE_SH, lw=4, off=(8, 8))
-    jer = skia.Path(); jer.moveTo(-70, -612)
-    jer.quadTo(0, -548, 70, -612)                     # V-neck
-    jer.lineTo(104, -612); jer.cubicTo(100, -560, 120, -520, 162, -510)  # right armhole
-    jer.cubicTo(176, -430, 180, -360, 172, -300)
-    jer.cubicTo(60, -282, -60, -282, -172, -300)
-    jer.cubicTo(-180, -360, -176, -430, -162, -510)
-    jer.cubicTo(-120, -520, -100, -560, -104, -612); jer.close()
-    _tt(cv, jer, JERSEY, JERSEY_SH, hi=JERSEY_HI, lw=5, off=(46, 34))
-    trim = skia.Path(); trim.moveTo(-70, -612); trim.quadTo(0, -548, 70, -612); cv.drawPath(trim, stroke(C(NAVY), 14))
+    jk = skia.Path(); jk.moveTo(-110, -612)
+    jk.cubicTo(-162, -598, -176, -480, -170, -360); jk.cubicTo(-166, -320, -160, -300, -150, -292)
+    jk.lineTo(150, -292); jk.cubicTo(160, -300, 166, -320, 170, -360)
+    jk.cubicTo(176, -480, 162, -598, 110, -612); jk.cubicTo(50, -628, -50, -628, -110, -612); jk.close()
+    _tt(cv, jk, NAVY, NAVY_SH, hi="#4a5a80", lw=5, off=(44, 32))
+    tee = skia.Path(); tee.moveTo(-46, -612); tee.cubicTo(-56, -500, -52, -380, -44, -296); tee.lineTo(44, -296)
+    tee.cubicTo(52, -380, 56, -500, 46, -612); tee.quadTo(0, -580, -46, -612); tee.close()
+    _tt(cv, tee, TEE, TEE_SH, lw=4, off=(10, 8))
     for sx in (-1, 1):
-        ah = skia.Path(); ah.moveTo(sx * 104, -612); ah.cubicTo(sx * 100, -560, sx * 120, -520, sx * 162, -510)
-        cv.drawPath(ah, stroke(C(NAVY), 12))
-    cv.drawLine(-168, -312, 168, -312, stroke(C(NAVY), 8))
-    f = skia.Font(TF, 120); w = f.measureText(number)
-    cv.drawString(number, -w / 2, -380, f, stroke(C(NAVY_SH), 10)); cv.drawString(number, -w / 2, -380, f, fill(C(NAVY)))
-    for fx, fy in ((-120, -470), (110, -440), (-60, -350)):
-        fo = skia.Path(); fo.moveTo(fx, fy); fo.quadTo(fx + 14, fy + 30, fx + 4, fy + 56); cv.drawPath(fo, stroke(C(JERSEY_SH), 5))
+        cv.drawLine(sx * 46, -606, sx * 44, -300, stroke(C(JERSEY), 8))
+        for k in range(4):
+            cv.drawCircle(sx * 60, -560 + k * 70, 6, fill(C("#d9c9a6")))
+    hem = skia.Path(); hem.addRoundRect(skia.Rect(-152, -318, 152, -288), 12, 12); _tt(cv, hem, NAVY_SH, "#10162a", lw=4, off=(4, 4))
+    cv.drawLine(-150, -308, -48, -308, stroke(C(JERSEY), 4)); cv.drawLine(48, -308, 150, -308, stroke(C(JERSEY), 4))
+    for sx in (-1, 1):
+        col = skia.Path(); col.moveTo(sx * 112, -612); col.quadTo(sx * 80, -640, sx * 46, -612); col.quadTo(sx * 80, -596, sx * 112, -612); col.close()
+        cv.drawPath(col, fill(C(NAVY_SH))); cv.drawPath(col, stroke(C(LINE), 3))
+    f = skia.Font(TF, 70); w = f.measureText("T")
+    cv.drawString("T", -86 - w / 2, -490, f, stroke(C(JERSEY), 16)); cv.drawString("T", -86 - w / 2, -490, f, stroke(C(LINE), 4)); cv.drawString("T", -86 - w / 2, -490, f, fill(C("#9a2f2a")))
     cv.restore()
     for a in up:
         arm(a, sweat=a[0][0] > 0)
@@ -131,15 +127,6 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
     for (cx, cy) in ((-0.5, -0.78), (0.1, -0.95), (0.55, -0.72)):
         a = skia.Path(); a.addArc(skia.Rect(cx * R - 40, hy + cy * R - 30, cx * R + 40, hy + cy * R + 30), 200, 110)
         cv.drawPath(a, stroke(C(HAIR_HI, 190), 7))
-    # sweatband across forehead (hair puffs above it)
-    band = skia.Path(); band.moveTo(-R * 1.0, hy - R * 0.5)
-    band.cubicTo(-R * 0.5, hy - R * 0.74, R * 0.5, hy - R * 0.74, R * 1.0, hy - R * 0.5)
-    band.lineTo(R * 1.0, hy - R * 0.3); band.cubicTo(R * 0.5, hy - R * 0.54, -R * 0.5, hy - R * 0.54, -R * 1.0, hy - R * 0.3); band.close()
-    cv.save(); cv.clipPath(_head_path(R * 1.03, hy), doAntiAlias=True)
-    _tt(cv, band, NAVY, NAVY_SH, lw=4.5, off=(6, 8))
-    for k in range(-6, 7):
-        cv.drawLine(k * 30, hy - R * 0.66 + abs(k) * 2.2, k * 30 + 4, hy - R * 0.44 + abs(k) * 2.2, stroke(C(NAVY_SH), 3))
-    cv.restore()
     # ---- face
     lx = look * 24
     ey = hy + 22
@@ -150,7 +137,7 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
         for (fx, fy) in ((-12, 70), (3, 80), (16, 68)):
             cv.drawCircle(sx * 110 + fx, ey + fy, 3.2, fill(C("#9a5636", 160)))
     GX = 76   # lens centers
-    GR = 64   # lens radius (eyes look a bit magnified)
+    GR = 56
     for sx in (-1, 1):
         ex = sx * GX + lx * 0.6
         if expr == "shock":
@@ -159,19 +146,19 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
         elif bl or expr in ("laugh", "closed"):
             cv.drawArc(skia.Rect(ex - 28, ey - 14, ex + 28, ey + 18), 200 if expr == "laugh" else 20, 140, False, stroke(ink, 8))
         else:
-            e = skia.Path(); e.addOval(skia.Rect(ex - 33, ey - 38, ex + 33, ey + 34))
+            e = skia.Path(); e.addOval(skia.Rect(ex - 27, ey - 31, ex + 27, ey + 28))
             cv.drawPath(e, fill(C("#fffdf8")))
             cv.save(); cv.clipPath(e, doAntiAlias=True)
             ix, iy = ex + lx * 0.45, ey + 2
-            cv.drawCircle(ix, iy, 23, fill(C("#5a3524"))); cv.drawCircle(ix, iy, 13, fill(C("#1a0f0a")))
+            cv.drawCircle(ix, iy, 19, fill(C("#5a3524"))); cv.drawCircle(ix, iy, 11, fill(C("#1a0f0a")))
             cv.drawCircle(ix + 9, iy - 10, 7, fill(C("#ffffff"))); cv.drawCircle(ix - 7, iy + 9, 3, fill(C("#ffffff", 180)))
             lid = {"tired": 0.55, "skeptic": 0.4 if sx < 0 else 0.0, "angry": 0.3, "smug": 0.35, "sad": 0.2, "determined": 0.28}.get(expr, 0.0)
             if lid:
-                cv.drawRect(skia.Rect(ex - 36, ey - 40, ex + 36, ey - 40 + 72 * lid), fill(C(SKIN)))
+                cv.drawRect(skia.Rect(ex - 30, ey - 33, ex + 30, ey - 33 + 60 * lid), fill(C(SKIN)))
             cv.restore()
             cv.drawPath(e, stroke(ink, 4))
-            ul = skia.Path(); ul.moveTo(ex - 35, ey - 4)
-            ul.cubicTo(ex - 28, ey - 42 + 72 * lid, ex + 28, ey - 42 + 72 * lid, ex + 35, ey - 6)
+            ul = skia.Path(); ul.moveTo(ex - 29, ey - 4)
+            ul.cubicTo(ex - 23, ey - 35 + 60 * lid, ex + 23, ey - 35 + 60 * lid, ex + 29, ey - 6)
             cv.drawPath(ul, stroke(ink, 7))
     # glasses: round brown translucent acetate, keyhole bridge, rivet dots, sports cord
     for sx in (-1, 1):
@@ -181,14 +168,14 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
         gl = skia.Paint(AntiAlias=True); gl.setShader(skia.GradientShader.MakeLinear([skia.Point(cx - GR, ey - GR), skia.Point(cx + GR, ey + GR)], [C("#ffffff", 120), C("#ffffff", 0), C("#ffffff", 0)], [0, 0.35, 1]))
         cv.save(); cv.clipPath(lens, doAntiAlias=True); cv.drawRect(skia.Rect(cx - GR, ey - GR, cx + GR, ey + GR), gl)
         cv.drawLine(cx - GR * 0.55, ey - GR * 0.1, cx - GR * 0.1, ey - GR * 0.6, stroke(C("#ffffff", 170), 9)); cv.restore()
-        cv.drawCircle(cx, ey, GR, stroke(C(LINE), 18)); cv.drawCircle(cx, ey, GR, stroke(C(FRAME), 13))
+        cv.drawCircle(cx, ey, GR, stroke(C(LINE), 13)); cv.drawCircle(cx, ey, GR, stroke(C(FRAME), 9))
         cv.drawArc(skia.Rect(cx - GR, ey - GR, cx + GR, ey + GR), 200, 70, False, stroke(C(FRAME_HI), 4))
         tx = sx * (GX + GR)
-        cv.drawLine(tx, ey - 10, sx * (R - 6), ey - 18, stroke(C(LINE), 13)); cv.drawLine(tx, ey - 10, sx * (R - 6), ey - 18, stroke(C(FRAME), 8))
+        cv.drawLine(tx, ey - 10, sx * (R - 6), ey - 18, stroke(C(LINE), 10)); cv.drawLine(tx, ey - 10, sx * (R - 6), ey - 18, stroke(C(FRAME), 6))
         for d in (0, 13):
             cv.drawCircle(tx - sx * (16 + d), ey - GR * 0.55, 3, fill(C("#d9c2a8")))
-    br_ = skia.Path(); br_.moveTo(-GX + GR - 2, ey - 14); br_.cubicTo(-18, ey - 40, 18, ey - 40, GX - GR + 2, ey - 14)
-    cv.drawPath(br_, stroke(C(LINE), 15)); cv.drawPath(br_, stroke(C(FRAME), 10))
+    br_ = skia.Path(); br_.moveTo(-GX + GR - 2, ey - 12); br_.cubicTo(-16, ey - 34, 16, ey - 34, GX - GR + 2, ey - 12)
+    cv.drawPath(br_, stroke(C(LINE), 11)); cv.drawPath(br_, stroke(C(FRAME), 7))
     B = {"neutral": (-74, 0), "angry": (-60, -20), "worried": (-76, 18), "shock": (-100, 6), "happy": (-78, 0), "laugh": (-78, 0),
          "skeptic": (-70, 0), "sad": (-72, 18), "tired": (-68, 6), "closed": (-72, 0), "smug": (-74, -8), "determined": (-64, -16)}
     bdy, tilt = B.get(expr, B["neutral"])
@@ -206,14 +193,14 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
         m = skia.Path(); m.moveTo(-32, my - 4); m.cubicTo(-28, my + h, 28, my + h, 34, my - 8); m.cubicTo(10, my + 2, -10, my + 2, -32, my - 4); m.close()
         cv.drawPath(m, fill(C("#6b2620")))
         cv.save(); cv.clipPath(m, doAntiAlias=True)
-        cv.drawRect(skia.Rect(-14, my - 10, 14, my + 10), fill(C("#ffffff"))); cv.drawLine(0, my - 10, 0, my + 10, stroke(C("#6b2620"), 3))  # big front teeth
+        cv.drawRect(skia.Rect(-32, my - 10, 32, my + 4), fill(C("#ffffff")))
         cv.drawOval(skia.Rect(-18, my + h * 0.55, 18, my + h + 10), fill(C("#e2716a")))
         cv.restore(); cv.drawPath(m, stroke(ink, 4.5))
     elif expr in ("happy", "laugh"):
         m = skia.Path(); m.moveTo(-56, my - 14); m.cubicTo(-44, my + 58, 44, my + 58, 58, my - 18); m.cubicTo(20, my - 2, -20, my - 2, -56, my - 14); m.close()
         cv.drawPath(m, fill(C("#6b2620")))
         cv.save(); cv.clipPath(m, doAntiAlias=True)
-        cv.drawRect(skia.Rect(-20, my - 20, 20, my + 18), fill(C("#ffffff"))); cv.drawLine(0, my - 20, 0, my + 18, stroke(C("#6b2620"), 4))
+        cv.drawRect(skia.Rect(-58, my - 20, 58, my + 8), fill(C("#ffffff")))
         cv.drawOval(skia.Rect(-26, my + 26, 26, my + 58), fill(C("#e2716a")))
         cv.restore(); cv.drawPath(m, stroke(ink, 5))
     elif expr == "shock":
@@ -222,13 +209,11 @@ def teca(cv, x, y, s, t, expr="neutral", look=0.0, pose="stand", mouth_open=0.0,
         m = skia.Path(); m.moveTo(-28, my + 16); m.cubicTo(-14, my - 2, 14, my - 2, 28, my + 14); cv.drawPath(m, stroke(ink, 8))
     elif expr in ("angry", "determined"):
         m = skia.Path(); m.moveTo(-28, my + 10); m.quadTo(0, my + 2, 28, my + 8); cv.drawPath(m, stroke(ink, 8))
-        if expr == "determined":
-            cv.drawRect(skia.Rect(-12, my + 4, 12, my + 16), fill(C("#ffffff"))); cv.drawRect(skia.Rect(-12, my + 4, 12, my + 16), stroke(ink, 3))
     elif expr == "tired":
         cv.drawLine(-22, my + 10, 22, my + 12, stroke(ink, 7))
-    else:  # signature: confident half-smile + one buck tooth peeking
+    else:  # signature: confident half-smile
         m = skia.Path(); m.moveTo(-30, my + 6); m.cubicTo(-6, my + 16, 22, my + 12, 38, my - 8); cv.drawPath(m, stroke(ink, 8))
-        cv.drawRect(skia.Rect(-4, my + 10, 12, my + 22), fill(C("#ffffff"))); cv.drawRect(skia.Rect(-4, my + 10, 12, my + 22), stroke(ink, 3))
+        cv.drawArc(skia.Rect(30, my - 18, 48, my + 0), 300, 120, False, stroke(ink, 4))
     if expr in ("worried", "shock"):
         sw_ = skia.Path(); sw_.moveTo(R * 0.86, hy - R * 0.3); sw_.cubicTo(R * 1.0, hy - 6, R * 0.94, hy + 26, R * 0.86, hy + 26)
         sw_.cubicTo(R * 0.78, hy + 26, R * 0.72, hy - 6, R * 0.86, hy - R * 0.3); _tt(cv, sw_, "#a8dcff", "#6fb6e6", lw=3, off=(4, 4))

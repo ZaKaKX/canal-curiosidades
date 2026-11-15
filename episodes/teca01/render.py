@@ -159,6 +159,24 @@ def cam(cv, lt, d, z0=1.0, z1=1.06, fx=540, fy=1280, hand=1.0):
     cv.translate(fx, fy); cv.scale(z, z); cv.translate(-fx, -fy)
 
 
+def jump(cv, T, marks, zs=(1.0, 1.14, 1.0, 1.1)):
+    """reenquadra (jump cut) quando a pose muda dentro do shot, pra troca não parecer 'pulo'"""
+    i = sum(1 for m in marks if T >= m)
+    z = zs[i % len(zs)]
+    cv.translate(540, 1280); cv.scale(z, z); cv.translate(-540, -1280)
+
+
+def stars(cv, x, y, T, s=1.0):
+    for i in range(3):
+        a = T * 4 + i * 2.09
+        sx, sy = x + 110 * s * math.cos(a), y + 34 * s * math.sin(a)
+        st = skia.Path()
+        for k in range(10):
+            r = (26 if k % 2 == 0 else 11) * s; an = math.pi / 2 + k * math.pi / 5
+            (st.moveTo if k == 0 else st.lineTo)(sx + r * math.cos(an), sy - r * math.sin(an))
+        st.close(); cv.drawPath(st, fill(C("#ffe14a"))); cv.drawPath(st, stroke(C("#2b1a12"), 3))
+
+
 def pop(lt, d=0.18):
     return eout(min(1, max(0, lt / d)))
 
@@ -316,8 +334,7 @@ def p1_flex(cv, lt, d, T):
     rays(cv, 900, 300, T, col="#ffd9a0", n=6, a=26, spread=40, base=125)
     P_(cv, T, "rafa", 210, 1640, 0.62, "laugh", "laugh", sig=3.5)
     P_(cv, T, "duda", 880, 1650, 0.6, "laugh", "laugh", sig=3.5, flip=True)
-    pump = int(lt / 0.55) % 2 == 0
-    TECA(cv, T, 540, 1830, 1.0, "smug" if pump else "determined", "flex" if pump else "hips")
+    TECA(cv, T, 540, 1830 - 10 * abs(math.sin(lt * 5)), 1.0, "smug", "flex", lean=3 * math.sin(lt * 5))
     sparkle(cv, 300, 980, T - ws(1, "atlético")); sparkle(cv, 790, 960, T - ws(1, "atlético") - 0.15, 0.8)
     cv.restore(); post(cv, T, 12, 70)
 
@@ -365,8 +382,8 @@ def p1_guio(cv, lt, d, T):
 
 def p1_spoiler(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.05)
-    plate(cv, "mato", 3, tint=("#8f9fb8",))
-    TECA(cv, T, 540, 1820, 0.95, "tired", "stand", talk=False, lean=6)
+    plate(cv, "mato", 3, 1.05, dx=-lt * 40, tint=("#c3cbd8",))
+    TECA(cv, T, 540, 1820, 0.95, "tired", "stand", talk=False, lean=10, walk=T * 3)
     for i in range(3):  # moscas de desânimo
         a = T * 3 + i * 2.1; cv.drawCircle(540 + 120 * math.cos(a), 760 + 40 * math.sin(a * 1.7), 6, fill(C("#1b1410")))
     cv.restore()
@@ -400,10 +417,9 @@ def p1_pasto(cv, lt, d, T):
 def p1_cafe(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     outdoor(cv, T, "pasto", sig=7, z=1.3, dy=-120)
-    sip = 0.5 - 0.5 * math.cos(min(1, lt / 0.9) * math.pi) if lt < 1.8 else max(0, 1 - (lt - 1.8) / 0.4)
-    TECA(cv, T, 540, 2100, 1.45, "closed" if sip > 0.7 else "happy", "think" if sip > 0.3 else "pockets", talk=False)
+    TECA(cv, T, 540, 2100, 1.45, "closed" if lt < 1.3 else "happy", "think", talk=False, lean=-3 * math.sin(min(1, lt / 1.3) * math.pi))
     yy = min(2100, 1262 + 570 * 1.45)
-    if sip > 0.3: cup(cv, 540 + lerp(260, 60, sip) , yy - lerp(420, 600, sip) * 1.45, 2.0, T)
+    cup(cv, 540 + 75 * 1.45, yy - 600 * 1.45, 2.0, T)
     cv.restore(); post(cv, T, 18, 80)
 
 
@@ -450,6 +466,7 @@ def p1_semsinal(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.08)
     outdoor(cv, T, "trilha", sig=6, z=1.2, dy=-100)
     tm, ti = ws(9, "mapa"), ws(9, "ideia")
+    jump(cv, T, [tm, ti])
     if T < tm:
         TECA(cv, T, 540, 2080, 1.4, "worried", "wave", talk=False); phone_up(cv, 540, min(2080, 1262 + 570 * 1.4), 1.4, T)
     elif T < ti:
@@ -500,7 +517,7 @@ def p1_andei(cv, lt, d, T):
 def p1_casinha(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.08)
     outdoor(cv, T, "casa", "dusk", sig=1.5)
-    TECA(cv, T, 860, 1900, 0.95, "shock", "stand", talk=False, flip=True)
+    TECA(cv, T, 750, 1900, 0.95, "shock", "stand", talk=False, flip=True)
     cv.restore(); post(cv, T, 10, 60)
 
 
@@ -511,11 +528,11 @@ def p1_caminhonetes(cv, lt, d, T):
 
 
 def p1_bati(cv, lt, d, T, t_buenas):
-    cv.save(); cam(cv, lt, d, 1.0, 1.06)
+    cv.save(); cam(cv, lt, d, 1.0, 1.06); jump(cv, T, [t_buenas])
     outdoor(cv, T, "casa_close", "dusk", sig=2)
     if T < t_buenas:
-        kn = ws(15, "porta"); knk = (0 < T - kn < 0.6) and (int((T - kn) / 0.15) % 2 == 0)
-        TECA(cv, T, 640, 1840, 1.0, "neutral", "point", talk=False, flip=True, lean=-6 if knk else 0)
+        kn = ws(15, "porta"); knk = -5 * abs(math.sin((T - kn) * 21)) if 0 < T - kn < 0.6 else 0
+        TECA(cv, T, 640, 1840, 1.0, "neutral", "point", talk=False, flip=True, lean=knk)
     else:
         TECA(cv, T, 640, 1840, 1.0, "happy", "wave", flip=True)
     cv.restore(); post(cv, T, 10, 50)
@@ -570,6 +587,7 @@ def p1_cinco(cv, lt, d, T):
 def p1_soueu(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     outdoor(cv, T, "casa_close", "dusk", sig=7, z=1.3, dy=-120)
+    jump(cv, T, [ws(20, "sou")])
     TECA(cv, T, 540, 2080, 1.4, "happy" if T >= ws(20, "sou") else "worried", "stand" if T < ws(20, "sou") else "shrug", look=0.3)
     cv.restore(); post(cv, T, 14, 40)
 
@@ -607,17 +625,18 @@ def p2_confundido(cv, lt, d, T):
 
 def p2_mochila(cv, lt, d, T, t_fal):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
-    outdoor(cv, T, "casa_close", "dusk", sig=3)
     got = T >= ws(3, "mochila") + 0.5
+    jump(cv, T, [ws(3, "mochila") + 0.5, t_fal], (1.0, 1.08, 1.16))
+    outdoor(cv, T, "casa_close", "dusk", sig=3)
     if T < t_fal:
         P_(cv, T, "chefe", 720, 1860, 0.95, "smug", "give" if not got else "hips", flip=True)
         if not got: mochila(cv, 720 - 330 * 0.95, 1860 - 470 * 0.95, 0.6)
-        TECA(cv, T, 290, 1860 + (14 if got else 0), 0.9, "shock" if got else "worried", "stand", talk=False, lean=(-8 if got else None))
-        if got: mochila(cv, 290, 1860 - 330 * 0.9, 0.62, rot=-6)
+        TECA(cv, T, 320, 1860, 0.9, "shock" if got else "worried", "stand", talk=False, lean=(-8 if got else None))
+        if got: mochila(cv, 320, 1790 - 420 * 0.9 + 10 * math.sin(T * 9), 0.8, rot=-6)
     else:
         P_(cv, T, "chefe", 720, 1860, 0.95, "angry", "point", talk=True, flip=True)
-        TECA(cv, T, 290, 1874, 0.9, "worried", "stand", talk=False, lean=-8)
-        mochila(cv, 290, 1860 - 330 * 0.9, 0.62, rot=-6)
+        TECA(cv, T, 320, 1860, 0.9, "worried", "stand", talk=False, lean=-8)
+        mochila(cv, 320, 1790 - 420 * 0.9 + 10 * math.sin(T * 9), 0.8, rot=-6)
     cv.restore(); post(cv, T, 8, 50)
     for k, w in enumerate(("abre", "para")):
         try: t0 = ws(3, w)
@@ -668,7 +687,7 @@ def p2_atleta(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.12)
     outdoor(cv, T, "estrada", sig=6, z=1.25, dy=-80)
     rays(cv, 540, 600, T, col="#fff0b8", n=14, a=40, spread=360, base=0)
-    TECA(cv, T, 540, 2100, 1.45, "determined", "flex" if int(lt / 0.5) % 2 == 0 else "hips", talk=False)
+    TECA(cv, T, 540, 2100, 1.45, "determined", "flex", talk=False, lean=3 * math.sin(lt * 5))
     cv.restore(); post(cv, T, 16, 80)
 
 
@@ -705,9 +724,14 @@ def p2_tropecei(cv, lt, d, T):
     if T < t0 + 0.15:
         TECA(cv, T, 520, 1840, 1.0, "shock", "panic", talk=False, walk=T * 18, lean=14)
     else:
-        k = min(1, (T - t0 - 0.15) / 0.5)
-        cv.save(); cv.translate(560 + 260 * k, 1840 - 160 * math.sin(k * math.pi)); cv.rotate(95 * ease(k))
-        TECA(cv, T, 0, 0, 1.0, "shock", "panic", talk=False, shadow=False); cv.restore()
+        k = min(1, (T - t0 - 0.15) / 0.45)
+        px = lerp(520, 150, ease(k)); py = lerp(1840, 1690, ease(k)) - 120 * math.sin(k * math.pi)
+        cv.save(); cv.translate(px, py); cv.rotate(90 * ein(k))
+        TECA(cv, T, 0, 0, 0.72, "shock" if k < 1 else "tired", "panic", talk=False, shadow=False, free=True); cv.restore()
+        if k >= 1:
+            lt2 = T - t0 - 0.6
+            cv.drawCircle(700, 1690, 90 + 120 * min(1, lt2 * 2), fill(C("#cdb79a", 150 * max(0, 1 - lt2 * 1.5))))
+            stars(cv, 150 + 775 * 0.72, 1560, T, 0.9)
     cv.restore(); post(cv, T, 8, 30)
 
 
@@ -717,9 +741,15 @@ def p2_rio(cv, lt, d, T):
     sky(cv, "dusk"); plate(cv, "rio", 2)
     if T < t_cai:
         k = min(1, lt / max(0.1, t_cai - (T - lt)))
-        x, y = lerp(-100, 520, k), lerp(900, 1500, k)
-        cv.save(); cv.translate(x, y); cv.rotate(lt * 720)
-        TECA(cv, T, 0, 380, 0.55, "shock", "panic", talk=False, shadow=False); cv.restore()
+        x, y = lerp(-120, 520, k), lerp(700, 1480, ein(k))
+        cv.save(); cv.translate(x, y); cv.rotate(lt * 600)
+        TECA(cv, T, 0, 420, 0.75, "shock", "panic", talk=False, shadow=False, free=True); cv.restore()
+    elif T > t_cai + 0.55:
+        up = eout(min(1, (T - t_cai - 0.55) / 0.35))
+        cv.save(); cv.clipRect(skia.Rect(0, 0, W, 1545))
+        TECA(cv, T, 540, 1545 + 1000 * 0.8 - up * 600 + 8 * math.sin(T * 4), 0.8, "shock", "panic", talk=False, shadow=False, free=True)
+        cv.restore()
+        cv.drawOval(skia.Rect(330, 1515, 750, 1575), stroke(C("#e8f6ff", 180), 6))
     splash(cv, 540, 1520, T - t_cai, 1.2)
     cv.restore(); post(cv, T, 8, 40)
 
@@ -727,10 +757,10 @@ def p2_rio(cv, lt, d, T):
 def p2_viatura(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     outdoor(cv, T, "viatura", "dusk", sig=2)
-    police_glow(cv, T, 330, 1150, 600, 80 if T >= ws(13, "viatura") else 0)
-    P_(cv, T, "policial", 260, 1880, 0.85, "skeptic", "hips")
-    TECA(cv, T, 790, 1880, 0.9, "worried", "stand", talk=False, flip=True)
-    drips(cv, 790, 1880, 0.9, T)
+    police_glow(cv, T, 610, 930, 520, 110)
+    P_(cv, T, "policial", 210, 1850, 0.7, "skeptic", "hips")
+    TECA(cv, T, 860, 1850, 0.72, "worried", "stand", talk=False, flip=True)
+    drips(cv, 860, 1850, 0.72, T)
     cv.restore(); post(cv, T, 8, 40)
 
 

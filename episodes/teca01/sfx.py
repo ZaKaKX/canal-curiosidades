@@ -115,7 +115,7 @@ else:
     siren(ws(13, "viatura"), 2.0, .07); pop(ws(15, "brasil"), .2, 1400); pop(ws(15, "neymar"), .2, 1500)
     siren(L[17]["s"], 2.0, .06); pop(ws(18, "mochila"), .2); pop(ws(18, "caminhão"), .2)
     chime(L[23]["s"] + 0.6)
-mix += mus
+if os.environ.get("MUSIC", "0") == "1": mix += mus
 mix *= np.clip((D - t) / 1.0, 0, 1)
 mix = mix / max(1e-6, np.abs(mix).max()) * 0.5
 sf.write(out, mix.astype(np.float32), SR)

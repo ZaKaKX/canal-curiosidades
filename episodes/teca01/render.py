@@ -31,9 +31,26 @@ def ws(i, word, nth=0):
     return hits[nth]["s"]
 
 
-def MO(T, k=1.0):
+TALK = []  # (s, e, quem) — boca só mexe em fala de diálogo
+
+
+def MO(T, k=1.0, who="teca"):
+    if not any(s <= T < e and w == who for s, e, w in TALK): return 0.0
     i = int(T * FPS)
     return MOUTH[i] * k if 0 <= i < len(MOUTH) else 0.0
+
+
+def phone_up(cv, x, y, s, T, flip=False):
+    """celular na mão do pose 'wave' (procurando sinal)"""
+    hx = x + (-1 if flip else 1) * (280 + 30 * math.sin(T * 9)) * s; hy = y - 880 * s
+    cv.save(); cv.translate(hx, hy); cv.rotate(10 * math.sin(T * 9)); cv.scale(s, s)
+    ph = skia.Path(); ph.addRoundRect(skia.Rect(-34, -70, 34, 50), 10, 10)
+    cv.drawPath(ph, fill(C("#1d1f24"))); cv.drawPath(ph, stroke(C("#2b1a12"), 4))
+    cv.drawRoundRect(skia.Rect(-28, -62, 28, 42), 6, 6, fill(C("#cfe6ff")))
+    for k in range(4):
+        cv.drawRect(skia.Rect(-20 + k * 11, 20 - k * 10, -12 + k * 11, 30), fill(C("#9aa3ad")))
+    cv.drawLine(-22, -50, 22, -6, stroke(C("#e8463a"), 7)); cv.drawLine(22, -50, -22, -6, stroke(C("#e8463a"), 7))
+    cv.restore()
 
 
 # ------------------------------------------------------------ plates / sky (cache)
@@ -269,16 +286,16 @@ def endcard(cv, T, lt, d):
 # ------------------------------------------------------------ shot helpers
 def TECA(cv, T, x, y, s, expr="neutral", pose="pockets", talk=True, k=1.0, free=False, **kw):
     if not free: y = min(y, 1262 + 570 * s)
-    teca(cv, x, y, s, T, expr=expr, pose=pose, mouth_open=MO(T, k) if talk else 0.0, **kw)
+    teca(cv, x, y, s, T, expr=expr, pose=pose, mouth_open=MO(T, k, "teca") if talk else 0.0, **kw)
 
 
 def P_(cv, T, look, x, y, s, expr="neutral", pose="stand", talk=False, k=1.0, sig=0, **kw):
     from cast import LOOKS
     y = min(y, 1260 + 565 * s * LOOKS[look].get("tall", 1.0))
     if sig > 0.3:
-        with blur(cv, sig): pessoa(cv, x, y, s, T, look=look, expr=expr, pose=pose, mouth_open=MO(T, k) if talk else 0, **kw)
+        with blur(cv, sig): pessoa(cv, x, y, s, T, look=look, expr=expr, pose=pose, mouth_open=MO(T, k, look) if talk else 0, **kw)
     else:
-        pessoa(cv, x, y, s, T, look=look, expr=expr, pose=pose, mouth_open=MO(T, k) if talk else 0, **kw)
+        pessoa(cv, x, y, s, T, look=look, expr=expr, pose=pose, mouth_open=MO(T, k, look) if talk else 0, **kw)
 
 
 def outdoor(cv, T, name, kind="gold", sig=2.5, z=1.0, dx=0, dy=0):
@@ -299,7 +316,8 @@ def p1_flex(cv, lt, d, T):
     rays(cv, 900, 300, T, col="#ffd9a0", n=6, a=26, spread=40, base=125)
     P_(cv, T, "rafa", 210, 1640, 0.62, "laugh", "laugh", sig=3.5)
     P_(cv, T, "duda", 880, 1650, 0.6, "laugh", "laugh", sig=3.5, flip=True)
-    TECA(cv, T, 540, 1830, 1.0, "smug", "flex")
+    pump = int(lt / 0.55) % 2 == 0
+    TECA(cv, T, 540, 1830, 1.0, "smug" if pump else "determined", "flex" if pump else "hips")
     sparkle(cv, 300, 980, T - ws(1, "atlético")); sparkle(cv, 790, 960, T - ws(1, "atlético") - 0.15, 0.8)
     cv.restore(); post(cv, T, 12, 70)
 
@@ -332,7 +350,7 @@ def p1_eu_primeiro(cv, lt, d, T):
     plate(cv, "quadra", 4)
     P_(cv, T, "biel", 190, 1680, 0.66, "neutral", "cross", sig=3)
     P_(cv, T, "duda", 900, 1680, 0.64, "skeptic", "hips", sig=3, flip=True)
-    TECA(cv, T, 560, 1830, 1.0, "happy", "wave")
+    TECA(cv, T, 560, 1830 - 40 * abs(math.sin(lt * 7)), 1.0, "happy", "wave", shadow=False)
     cv.restore(); post(cv, T, 12, 60)
 
 
@@ -382,8 +400,10 @@ def p1_pasto(cv, lt, d, T):
 def p1_cafe(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     outdoor(cv, T, "pasto", sig=7, z=1.3, dy=-120)
-    TECA(cv, T, 540, 2100, 1.45, "happy", "think", talk=False)
-    cup(cv, 540 + 75 * 1.45, 2100 - 600 * 1.45, 2.0, T)
+    sip = 0.5 - 0.5 * math.cos(min(1, lt / 0.9) * math.pi) if lt < 1.8 else max(0, 1 - (lt - 1.8) / 0.4)
+    TECA(cv, T, 540, 2100, 1.45, "closed" if sip > 0.7 else "happy", "think" if sip > 0.3 else "pockets", talk=False)
+    yy = min(2100, 1262 + 570 * 1.45)
+    if sip > 0.3: cup(cv, 540 + lerp(260, 60, sip) , yy - lerp(420, 600, sip) * 1.45, 2.0, T)
     cv.restore(); post(cv, T, 18, 80)
 
 
@@ -429,7 +449,13 @@ def p1_duashoras(cv, lt, d, T):
 def p1_semsinal(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.08)
     outdoor(cv, T, "trilha", sig=6, z=1.2, dy=-100)
-    TECA(cv, T, 540, 2080, 1.4, "worried", "phone")
+    tm, ti = ws(9, "mapa"), ws(9, "ideia")
+    if T < tm:
+        TECA(cv, T, 540, 2080, 1.4, "worried", "wave", talk=False); phone_up(cv, 540, min(2080, 1262 + 570 * 1.4), 1.4, T)
+    elif T < ti:
+        TECA(cv, T, 540, 2080, 1.4, "shock", "shrug", talk=False)
+    else:
+        TECA(cv, T, 540, 2080, 1.4, "worried", "think", talk=False, look=0.7 * math.sin(T * 5))
     cv.restore(); post(cv, T, 14, 60)
     for k, (wd, txt, x) in enumerate((("sinal", "SEM SINAL", 300), ("mapa", "SEM MAPA", 780), ("ideia", "???", 540))):
         t0 = ws(9, wd)
@@ -441,7 +467,7 @@ def p1_semsinal(cv, lt, d, T):
 def p1_brasileiro(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.05, 1.12)
     outdoor(cv, T, "trilha", sig=8, z=1.3, dy=-140)
-    TECA(cv, T, 540, 2120, 1.5, "smug", "pockets")
+    TECA(cv, T, 540, 2120, 1.5, "smug", "hips", talk=False, lean=-4)
     sparkle(cv, 720, 860, lt - 0.8)
     cv.restore(); post(cv, T, 18, 60)
 
@@ -452,7 +478,7 @@ def p1_pulinho(cv, lt, d, T):
     P_(cv, T, "biel", 160, 1820, 0.7, "tired", "stand", lean=-14)
     P_(cv, T, "duda", 370, 1850, 0.66, "tired", "hips")
     P_(cv, T, "rafa", 920, 1830, 0.7, "skeptic", "cross", flip=True)
-    TECA(cv, T, 650, 1840, 0.9, "happy", "talk")
+    TECA(cv, T, 650, 1840, 0.9, "happy", "point" if lt > 1.0 else "talk")
     cv.restore(); post(cv, T, 10, 60)
 
 
@@ -467,7 +493,7 @@ def p1_andei(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.03, hand=0.6)
     plate(cv, "mato", 2.5, 1.12, dx=-lt * 90)
     rays(cv, 780, -100, T, col="#fff0b8", n=6, a=34, spread=30, base=105)
-    TECA(cv, T, 300 + lt * 260, 1820, 0.8, "worried", "pockets", talk=False, walk=T * 9)
+    TECA(cv, T, 300 + lt * 260, 1820, 0.8, "worried", "pockets", talk=False, walk=T * 9, look=0.6 * math.sin(T * 2.5))
     cv.restore(); post(cv, T, 12, 90)
 
 
@@ -488,7 +514,8 @@ def p1_bati(cv, lt, d, T, t_buenas):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     outdoor(cv, T, "casa_close", "dusk", sig=2)
     if T < t_buenas:
-        TECA(cv, T, 640, 1840, 1.0, "neutral", "point", talk=False, flip=True)
+        kn = ws(15, "porta"); knk = (0 < T - kn < 0.6) and (int((T - kn) / 0.15) % 2 == 0)
+        TECA(cv, T, 640, 1840, 1.0, "neutral", "point", talk=False, flip=True, lean=-6 if knk else 0)
     else:
         TECA(cv, T, 640, 1840, 1.0, "happy", "wave", flip=True)
     cv.restore(); post(cv, T, 10, 50)
@@ -526,7 +553,7 @@ def p1_tito(cv, lt, d, T):
 def p1_naosou(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.05, 1.15)
     outdoor(cv, T, "casa_close", "dusk", sig=9, z=1.4, dy=-160)
-    TECA(cv, T, 540, 2350, 1.9, "worried", "pockets", talk=True, look=-0.2)
+    TECA(cv, T, 540, 2350, 1.9, "worried", "pockets", talk=False, look=0.8 if int(lt * 3) % 2 else -0.8, lean=1.5 * math.sin(T * 40))
     cv.restore(); post(cv, T, 16, 40)
 
 
@@ -543,7 +570,7 @@ def p1_cinco(cv, lt, d, T):
 def p1_soueu(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     outdoor(cv, T, "casa_close", "dusk", sig=7, z=1.3, dy=-120)
-    TECA(cv, T, 540, 2080, 1.4, "happy" if T >= ws(20, "sou") else "worried", "stand", look=0.3)
+    TECA(cv, T, 540, 2080, 1.4, "happy" if T >= ws(20, "sou") else "worried", "stand" if T < ws(20, "sou") else "shrug", look=0.3)
     cv.restore(); post(cv, T, 14, 40)
 
 
@@ -563,7 +590,7 @@ def p1_seria(cv, lt, d, T):
 def p2_recap(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     plate(cv, "mato", 3)
-    TECA(cv, T, 540, 1830, 1.0, "worried", "phone")
+    TECA(cv, T, 540, 1830, 1.0, "worried", "wave", talk=False); phone_up(cv, 540, min(1830, 1262 + 570), 1.0, T)
     cv.restore(); post(cv, T, 10, 70)
     stamp(cv, "PARTE 2", lt, y=480, size=140, col="#ffd54a", fg="#1b2a6a", rot=-5)
 
@@ -602,7 +629,8 @@ def p2_naosabia(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.1)
     outdoor(cv, T, "estrada", sig=8, z=1.3, dy=-120)
     mochila(cv, 540 - 220, 2100 - 900, 1.1, rot=-10)
-    TECA(cv, T, 540, 2100, 1.4, "closed" if T >= ws(4, "nem") else "worried", "pockets")
+    nem = T >= ws(4, "nem")
+    TECA(cv, T, 540, 2100, 1.4, "closed" if nem else "skeptic", "pockets", talk=False, look=-0.8 if not nem else 0, lean=8 * math.sin(T * 12) if nem else None)
     cv.restore(); post(cv, T, 14, 60)
 
 
@@ -621,7 +649,7 @@ def p2_radio(cv, lt, d, T):
 def p2_entendi(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.05, 1.18)
     outdoor(cv, T, "estrada", sig=9, z=1.4, dy=-160)
-    TECA(cv, T, 540, 2300, 1.8, "skeptic", "think", look=-0.4)
+    TECA(cv, T, 540, 2300, 1.8, "skeptic", "think", talk=False, look=-0.7, lean=-5)
     cv.restore(); post(cv, T, 14, 40)
 
 
@@ -640,7 +668,7 @@ def p2_atleta(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.12)
     outdoor(cv, T, "estrada", sig=6, z=1.25, dy=-80)
     rays(cv, 540, 600, T, col="#fff0b8", n=14, a=40, spread=360, base=0)
-    TECA(cv, T, 540, 2100, 1.45, "determined", "flex")
+    TECA(cv, T, 540, 2100, 1.45, "determined", "flex" if int(lt / 0.5) % 2 == 0 else "hips", talk=False)
     cv.restore(); post(cv, T, 16, 80)
 
 
@@ -783,7 +811,7 @@ def p2_cafe(cv, lt, d, T):
 def p2_naovirei(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.06)
     plate(cv, "delegacia", 7, 1.25, dy=-80)
-    TECA(cv, T, 540, 2080, 1.4, "neutral", "shrug")
+    TECA(cv, T, 540, 2080, 1.4, "tired", "shrug", talk=False)
     cv.restore(); post(cv, T, 14, 60)
 
 
@@ -791,7 +819,7 @@ def p2_heroi(cv, lt, d, T):
     cv.save(); cam(cv, lt, d, 1.0, 1.12)
     plate(cv, "delegacia", 8, 1.3, dy=-100)
     rays(cv, 540, 700, T, col="#fff0b8", n=14, a=36, spread=360, base=T * 8)
-    TECA(cv, T, 540, 2100, 1.45, "smug", "hips")
+    TECA(cv, T, 540, 2100, 1.45, "smug", "hips", talk=False)
     # medalha
     mx, my = 540 + 40 * 1.45, 2100 - 520 * 1.45
     k = pop(lt - 0.6, 0.3)
@@ -822,6 +850,8 @@ if PART == 1:
     add(S(17), S(18), p1_tito); add(S(18), S(19), p1_naosou); add(S(19), S(20), p1_cinco); add(S(20), S(21), p1_soueu)
     add(S(21), S(22), p1_seria); add(S(22), END + 1, endcard)
     CAP_HIDE = S(22)
+    TALK += [(S(3), L[3]["e"] + 0.2, "teca"), (ws(7, "van", 1), L[7]["e"] + 0.2, "teca"), (S(11), L[11]["e"] + 0.1, "teca"),
+             (ws(15, "buenas"), L[15]["e"] + 0.2, "teca"), (S(17), L[17]["e"] + 0.2, "chefe"), (ws(20, "sou"), L[20]["e"] + 0.2, "teca")]
 else:
     S = lambda i: L[i]["s"]
     add(0, S(2), p2_recap); add(S(2), S(3), p2_confundido); add(S(3), S(4), p2_mochila, ws(3, "falaram"))
@@ -831,6 +861,7 @@ else:
     add(S(16), S(17), p2_riu); add(S(17), S(18), p2_meses); add(S(18), S(19), p2_largar); add(S(19), S(20), p2_pegou)
     add(S(20), S(21), p2_amigos); add(S(21), S(22), p2_cafe); add(S(22), S(23), p2_naovirei); add(S(23), END + 1, p2_heroi)
     CAP_HIDE = None
+    TALK += [(ws(3, "leva"), L[3]["e"] + 0.2, "chefe"), (S(15), L[15]["e"] + 0.3, "teca")]
 NFRAMES = int(END * FPS)
 
 
